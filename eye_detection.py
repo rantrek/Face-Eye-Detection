@@ -1,5 +1,4 @@
 #Import libraries
-#from imutils.video import VideoStream
 from picamera2 import Picamera2
 import imutils
 from time import sleep
@@ -54,8 +53,8 @@ def detectEyeLandmarks(cap,model,mesh):
     with model  as face_mesh:
         eye_landmark_list =[]
         while True:
-            #frame = cap.read()
-            frame = cap.capture_array()
+            #frame = cap.read() #uncomment for accessing webcam
+            frame = cap.capture_array() #use for raspberry pi camera
             frame = imutils.resize(frame, width=450)
             frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             frame.flags.writeable = False
@@ -80,9 +79,9 @@ def detectEyeLandmarks(cap,model,mesh):
         return eye_landmark_list
 
 #Main
-#video_streaming = VideoStream(src=0).start()
-video_streaming = Picamera2()
-video_streaming.start()
+#video_streaming = cv2.VideoCapture(0) #uncomment when using webcam
+video_streaming = Picamera2() #use only for raspberry pi camera
+video_streaming.start() #only for raspberry pi camera
 sleep(1.0)
 Landmarks_list = detectEyeLandmarks(video_streaming, face_mesh_model,mp_face_mesh)
 video_streaming.stop()

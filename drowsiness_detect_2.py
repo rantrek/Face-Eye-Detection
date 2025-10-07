@@ -1,7 +1,6 @@
 #Import libraries
 import numpy as np
 from scipy.spatial import distance as dist
-from imutils.video import VideoStream
 import imutils
 from time import sleep
 import cv2
@@ -161,8 +160,7 @@ def DrowsinessDetection(cap,model,mesh, alarm):
 #Main
 #set alarm path
 alarm_path = "alarm.wav"
-video_streaming = VideoStream(src=0).start()
-#video_streaming = VideoStream(usePiCamera=True).start()
+video_streaming = cv2.VideoCapture(0) 
 sleep(1.0)
 Landmarks_list = DrowsinessDetection(video_streaming, face_mesh_model,mp_face_mesh, alarm_path)
 print("Number of frames processed: ",len(Landmarks_list))
