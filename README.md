@@ -3,8 +3,8 @@
 ## Objective
 
 The purpose of this project:
-1) Develop computer vision algorithms that can detect eyes, eye blinks and drowsiness.
-2) Implement the CV algorithms in a raspberry pi microprocessor with camera (Edge device) and capture the results on a video.
+1) Develop computer vision algorithms that can detect eyes, eye blinks and drowsiness. (Completed)
+2) Implement the CV algorithms in a raspberry pi microprocessor with camera (Edge device) and capture the results on a video. (Completed)
 3) Create a desktop GUI to display the results (# of eye blinks, drowsiness detected message etc.) (to do) 
 
 ## Hardware
@@ -18,8 +18,7 @@ The hardware used for this project comprises:
 The programs were developed in Python. There are three python files: 
 1) eye_detection.py - detects the eyes (implememted on both webcam and raspberry pi cam)
 2) eyeblink_detection_2.py - detects and counts the number of eye blinks (implemented on both webcam and raspberry pi cam)
-3) drowsiness_detect_2.py - detects drowsiness and sounds alarm (currently only implemented on webcam and next step,
-raspberry pi cam)
+3) drowsiness_detect_2.py - detects drowsiness and sounds alarm (currently only implemented on webcam and next step, raspberry pi cam)
 
 ## Techniques
 
