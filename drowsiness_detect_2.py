@@ -1,11 +1,9 @@
 #Import libraries
 import numpy as np
 from scipy.spatial import distance as dist
-import imutils
 from time import sleep
 import cv2
 import mediapipe as mp
-from threading import Thread
 import playsound
 
 #Initialize the face mesh model
@@ -82,86 +80,4 @@ def detectBlinks(img,landmarks):
     cv2.drawContours(img, [rightEyeHull], -1, (0, 255, 0), 1)
     
     return ear
-
-def DrowsinessDetection(cap,model,mesh, alarm):
-    """This function generates a face mesh and displays it in real-time.
-       Input: webcam capture, face mesh model, mesh (mp.solutions.face_mesh)
-       Returns: list of all facial landmarks for every frame
-    """
-    #Define two constants, one for the eye aspect ratio to indicate
-    #blink and then a second constant for the number of consecutive
-    #frames the eye must be below the threshold
-    EYE_AR_THRESH = 0.25
-    EYE_AR_CONSEC_FRAMES = 3
-
-    #Initialize the frame counters 
-    COUNTER = 0
-    ALARM_ON = False
-
-    with model  as face_mesh:
-        eye_landmark_list =[]
-        while True:
-            frame = cap.read()
-            
-            frame = imutils.resize(frame, width=450)
-            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            frame.flags.writeable = False
-            results = face_mesh.process(frame)
-
-            frame.flags.writeable = True
-            frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
-
-            if results.multi_face_landmarks:
-                for eye_landmark in results.multi_face_landmarks:
-                    createFaceMesh(frame,eye_landmark,mesh)
-                    ear = detectBlinks(frame,eye_landmark)
-                    # check to see if the eye aspect ratio is below the blink
-                    # threshold, and if so, increment the blink frame counter
-                    if ear < EYE_AR_THRESH:
-                        COUNTER += 1
-                    # if the eyes were closed for a sufficient number of
-			        # then sound the alarm
-                        if COUNTER >= EYE_AR_CONSEC_FRAMES:
-                            # if the alarm is not on, turn it on
-                            if not ALARM_ON:
-                                ALARM_ON = True
-                                # check to see if an alarm file was supplied,
-                                # and if so, start a thread to have the alarm
-                                # sound played in the background
-                                if alarm != "":
-                                    t = Thread(target=soundAlarm,
-                                        args= (alarm,))
-                                    t.deamon = True
-                                    t.start()
-                        # draw an alarm on the frame
-                        cv2.putText(frame, "DROWSINESS ALERT!", (10, 30),
-                            cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
-                    else:
-                        # if the eyes were closed for a sufficient number of
-                        # then increment the total number of blinks
-                        COUNTER = 0
-                        ALARM_ON = False
-                
-                    # the computed eye aspect ratio for the frame
-                    cv2.putText(frame, "EAR: {:.2f}".format(ear), (300, 30),
-                        cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
-
-                    eye_landmark_list.append(eye_landmark.landmark)
-
-            cv2.imshow('MediaPipe Face Mesh', frame)
-            if cv2.waitKey(1) & 0xFF == 27:
-                break
-        
-        cv2.destroyAllWindows()
-        cap.stop()
-
-        return eye_landmark_list
-
-#Main
-#set alarm path
-alarm_path = "alarm.wav"
-video_streaming = cv2.VideoCapture(0) 
-sleep(1.0)
-Landmarks_list = DrowsinessDetection(video_streaming, face_mesh_model,mp_face_mesh, alarm_path)
-print("Number of frames processed: ",len(Landmarks_list))
 
